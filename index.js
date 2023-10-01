@@ -12,7 +12,7 @@ app.use(express.json()); // Parsing JSON requests
 const corsOptions = {
     origin: ['*'], // You can specify allowed origins here, or use '*' for any origin
 };
-app.use(cors(corsOptions)); // Applying CORS middleware with the specified options
+app.use(cors()); // Applying CORS middleware with the specified options
 
 // Establishing a MySQL database connection using environment variables
 const connection = mysql.createConnection({
