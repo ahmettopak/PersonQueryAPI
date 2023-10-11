@@ -45,17 +45,59 @@ app.get('/person', (req, res) => {
 
     // Constructing the SQL query based on non-empty parameters
     const tableName = process.env.TABLE_NAME; // Extracting table name from .env file
-    const sql = `SELECT * FROM ${tableName} WHERE ` + Object.keys(queryParams).map(key => `${key} = ?`).join(' AND ');
+
+    sql = `SELECT * FROM ${tableName} WHERE ` + Object.keys(queryParams).map(key => `${key} = ?`).join(' AND ');
 
     // Executing the query with the corresponding values
     const values = Object.values(queryParams);
-    connection.query(sql, values, (error, results, fields) => {
-        if (error) {
-            res.status(500).json({ error: 'Database error' }); // Handling database errors
-        } else {
-            res.json(results); // Sending query results as JSON response
-        }
-    });
+    try {
+        connection.query(sql, values, (error, results, fields) => {
+            if (error) {
+                res.json({ "id": 0, "TC": "", "ADI": "", "SOYADI": "", "DOGUMTARIHI": "", "NUFUSIL": "", "NUFUSILCE": "", "ANNEADI": "", "ANNETC": "", "BABAADI": "", "BABATC": "", "UYRUK": null }); // Handling database errors
+            } else {
+                res.json(results); // Sending query results as JSON response
+            }
+        });
+    }
+    catch (error) {
+
+        res.json(''); // Handling database errors
+
+    }
+});
+
+app.get('/gsm', (req, res) => {
+    // Extracting query parameters from the request URL
+    const { tc, phone } = req.query;
+
+    // Creating an object to hold non-empty parameters and their corresponding fields
+    const queryParams = {};
+
+    if (tc) queryParams.TC = tc;
+    if (phone) queryParams.GSM = phone;
+    var sql = "";
+    const tableName = process.env.GSM_TABLE_NAME; // Extracting table name from .env file
+
+    sql = `SELECT * FROM ${tableName} WHERE ` + Object.keys(queryParams).map(key => `${key} = ?`).join(' AND ');
+
+
+    // Constructing the SQL query based on non-empty parameters
+    // Executing the query with the corresponding values
+    const values = Object.values(queryParams);
+    try {
+        connection.query(sql, values, (error, results, fields) => {
+            if (error) {
+                res.json({ TC: "", GSM: "" }); // Handling database errors
+            } else {
+                res.json(results); // Sending query results as JSON response
+            }
+        });
+    }
+    catch (error) {
+
+        res.json(''); // Handling database errors
+
+    }
 });
 
 // Starting the application on the specified port
